@@ -1,0 +1,60 @@
+my-card {
+  margin-bottom: 1rem;
+  border: 1px solid gray;
+  display: inline-block;
+  border-radius: 6px;
+  vertical-align: top;
+  flex-grow: 1;
+}
+
+:host {
+  margin-bottom: 0;
+  border: 1px solid gray;
+  display: inline-block;
+  border-radius: 6px;
+  vertical-align: top;
+}
+
+::slotted(img){
+  display: block;
+  width: 100%;
+}
+
+::slotted(my-card){
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.c-card__image:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+.c-card__image > img {
+  display: block;
+  border: 0;
+}
+
+.c-card__body:empty {
+  display: none;
+}
+
+.c-card__body > *:last-child {
+  margin-bottom: 0;
+}
+
+.c-card__body:not(:first-child) {
+  padding-top: 0;
+}
+
+.c-card__body--small {
+  padding: 0.5rem;
+}
+
+.c-card__body--medium { 
+  padding: 1rem;
+}
+
+.c-card__body--large {
+  padding: 2rem;
+}
+

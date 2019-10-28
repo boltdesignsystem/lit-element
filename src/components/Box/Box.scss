@@ -1,0 +1,25 @@
+:host {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid gray;
+  display: inline-block;
+}
+
+my-box {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid gray;
+  display: inline-block;
+}
+
+.test-component--small {
+  padding: 0.25rem;
+}
+
+.test-component--medium {
+  padding: 0.5rem;
+}
+
+.test-component--large {
+  padding: 1rem;
+}
