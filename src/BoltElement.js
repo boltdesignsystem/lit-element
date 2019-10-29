@@ -10,10 +10,10 @@ const useShadow =
 class BoltElement extends Slotify(LitElement) {
   createRenderRoot() {
     if (useShadow && !this.constructor.noShadow && this.attachShadow) {
-      this.useShadow = true;
+      this.noShadow = false;
       return this.attachShadow({ mode: 'open' });
     }
-    this.useShadow = false;
+    this.noShadow = true;
     return this;
   }
 
@@ -21,7 +21,7 @@ class BoltElement extends Slotify(LitElement) {
     super.connectedCallback && super.connectedCallback();
     this.lazyStyles = this.constructor.lazyStyles;
 
-    if (this.lazyStyles && !this.useShadow) {
+    if (this.lazyStyles && this.noShadow) {
       styleInjector(...this.lazyStyles).add();
     }
   }
@@ -29,7 +29,7 @@ class BoltElement extends Slotify(LitElement) {
   disconnectedCallback() {
     super.disconnectedCallback && super.disconnectedCallback();
 
-    if (this.lazyStyles && !this.useShadow) {
+    if (this.lazyStyles && this.noShadow) {
       styleInjector(...this.lazyStyles).remove();
     }
   }
