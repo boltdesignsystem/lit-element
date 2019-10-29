@@ -9,8 +9,6 @@
  */
 
 (function() {
-  
-
   // defaultPrevented is broken in IE.
   // https://connect.microsoft.com/IE/feedback/details/790389/event-defaultprevented-returns-false-after-preventdefault-was-called
   const workingDefaultPrevented = (function() {
@@ -33,7 +31,7 @@
         get() {
           return true;
         },
-        configurable: true
+        configurable: true,
       });
     };
   }
@@ -41,7 +39,7 @@
   const isIE = /Trident/.test(navigator.userAgent);
 
   // Event constructor shim
-  if (!window.Event || isIE && (typeof window.Event !== 'function')) {
+  if (!window.Event || (isIE && typeof window.Event !== 'function')) {
     const origEvent = window.Event;
     /**
      * @param {!string} inType
@@ -62,7 +60,7 @@
   }
 
   // CustomEvent constructor shim
-  if (!window.CustomEvent || isIE && (typeof window.CustomEvent !== 'function')) {
+  if (!window.CustomEvent || (isIE && typeof window.CustomEvent !== 'function')) {
     /**
      * @template T
      * @param {!string} inType
@@ -77,7 +75,7 @@
     window.CustomEvent.prototype = window.Event.prototype;
   }
 
-  if (!window.MouseEvent || isIE && (typeof window.MouseEvent !== 'function')) {
+  if (!window.MouseEvent || (isIE && typeof window.MouseEvent !== 'function')) {
     const origMouseEvent = window.MouseEvent;
     /**
      *
@@ -87,12 +85,23 @@
     window.MouseEvent = function(inType, params) {
       params = params || {};
       const e = document.createEvent('MouseEvent');
-      e.initMouseEvent(inType,
-        Boolean(params.bubbles), Boolean(params.cancelable),
-        params.view || window, params.detail,
-        params.screenX, params.screenY, params.clientX, params.clientY,
-        params.ctrlKey, params.altKey, params.shiftKey, params.metaKey,
-        params.button, params.relatedTarget);
+      e.initMouseEvent(
+        inType,
+        Boolean(params.bubbles),
+        Boolean(params.cancelable),
+        params.view || window,
+        params.detail,
+        params.screenX,
+        params.screenY,
+        params.clientX,
+        params.clientY,
+        params.ctrlKey,
+        params.altKey,
+        params.shiftKey,
+        params.metaKey,
+        params.button,
+        params.relatedTarget,
+      );
       return e;
     };
     if (origMouseEvent) {

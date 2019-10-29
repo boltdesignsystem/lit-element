@@ -9,32 +9,30 @@
  */
 
 (function() {
-  
-
   if (!Array.from) {
-    Array.from = function (object) {
-      return [].slice.call(/** @type {IArrayLike} */(object));
+    Array.from = function(object) {
+      return [].slice.call(/** @type {IArrayLike} */ (object));
     };
   }
 
   if (!Object.assign) {
     const assign = function(target, source) {
       const n$ = Object.getOwnPropertyNames(source);
-      for (var i=0, p; i < n$.length; i++) {
+      for (var i = 0, p; i < n$.length; i++) {
         p = n$[i];
         target[p] = source[p];
       }
-    }
+    };
 
     Object.assign = function(target) {
       const args = [].slice.call(arguments, 1);
-      for (var i=0, s; i < args.length; i++) {
+      for (var i = 0, s; i < args.length; i++) {
         s = args[i];
         if (s) {
           assign(target, s);
         }
       }
       return target;
-    }
+    };
   }
 })();

@@ -8,8 +8,6 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-
-
 /*
  * Polyfills loaded: HTML Imports, Custom Elements, platform polyfills, template
  * Used in: IE 11

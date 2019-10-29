@@ -11,27 +11,30 @@
 export {};
 
 // Establish scope.
-window.WebComponents = window.WebComponents || {'flags':{}};
+window.WebComponents = window.WebComponents || { flags: {} };
 
 // loading script
 const file = 'webcomponents-bundle';
-const script = document.querySelector(`script[src*="${  file  }"]`);
+const script = document.querySelector(`script[src*="${file}"]`);
 const flagMatcher = /wc-(.+)/;
 
 // Flags. Convert url arguments to flags
 const flags = {};
 if (!flags.noOpts) {
   // from url
-  location.search.slice(1).split('&').forEach((option) => {
-    const parts = option.split('=');
-    let match;
-    if (parts[0] && (match = parts[0].match(flagMatcher))) {
-      flags[match[1]] = parts[1] || true;
-    }
-  });
+  location.search
+    .slice(1)
+    .split('&')
+    .forEach(option => {
+      const parts = option.split('=');
+      let match;
+      if (parts[0] && (match = parts[0].match(flagMatcher))) {
+        flags[match[1]] = parts[1] || true;
+      }
+    });
   // from script
   if (script) {
-    for (let i=0, a; (a=script.attributes[i]); i++) {
+    for (let i = 0, a; (a = script.attributes[i]); i++) {
       if (a.name !== 'src') {
         flags[a.name] = a.value || true;
       }
@@ -41,7 +44,7 @@ if (!flags.noOpts) {
   if (flags.log && flags.log.split) {
     const parts = flags.log.split(',');
     flags.log = {};
-    parts.forEach((f) => {
+    parts.forEach(f => {
       flags.log[f] = true;
     });
   } else {
@@ -55,7 +58,7 @@ const forceShady = flags.shadydom;
 if (forceShady) {
   window.ShadyDOM = window.ShadyDOM || {};
   window.ShadyDOM.force = forceShady;
-  const {noPatch} = flags;
+  const { noPatch } = flags;
   window.ShadyDOM.noPatch = noPatch === 'true' ? true : noPatch;
 }
 
