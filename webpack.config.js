@@ -1,23 +1,23 @@
-const { resolve, join } = require('path');
+const { join } = require('path');
 // const WebpackIndexHTMLPlugin = require('@open-wc/webpack-index-html-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const TerserPlugin = require('terser-webpack-plugin');
 const merge = require('webpack-merge');
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const NunjucksWebpackPlugin = require('nunjucks-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const DirectoryNamedWebpackPlugin = require("directory-named-webpack-plugin");
+const DirectoryNamedWebpackPlugin = require('directory-named-webpack-plugin');
+const cssnano = require('cssnano');
 
 const prod = process.env.NODE_ENV === 'production';
 
-
-const polyfills = [
+const filesToCopy = [
   {
-    from: join(process.cwd(), 'index.html'),
+    from: join(process.cwd(), 'src/images'),
     to: '.',
-    flatten: true
+    flatten: true,
   },
 ];
 
@@ -42,7 +42,7 @@ const scssLoaders = [
       sourceMap: !prod,
       sassOptions: {
         outputStyle: 'expanded',
-      }
+      },
     },
   },
 ];
@@ -55,9 +55,7 @@ const sharedConfig = {
     // chunkFilename: `js/[name]-chunk-[chunkhash].js`,
   },
   resolve: {
-    plugins: [
-      new DirectoryNamedWebpackPlugin(true),
-    ]
+    plugins: [new DirectoryNamedWebpackPlugin(true)],
   },
   module: {
     rules: [
@@ -69,9 +67,9 @@ const sharedConfig = {
             use: [
               {
                 loader: 'style-loader',
-                options: { 
+                options: {
                   injectType: 'lazyStyleTag',
-                  },
+                },
               },
               scssLoaders,
             ].reduce((acc, val) => acc.concat(val), []),
@@ -92,65 +90,70 @@ const sharedConfig = {
       },
     ],
   },
-  optimization: !prod ? {} : {
-    minimize: true,
-    minimizer: [new TerserPlugin({
-      sourceMap: !prod,
-      terserOptions: {
-        safari10: true,
+  optimization: !prod
+    ? {}
+    : {
+        minimize: true,
+        minimizer: [
+          new TerserPlugin({
+            sourceMap: !prod,
+            terserOptions: {
+              safari10: true,
+            },
+          }),
+        ],
       },
-    })],
-  },
   mode: !prod ? 'development' : 'production',
-  devtool: !prod ? 'source-map': 'none',
+  devtool: !prod ? 'source-map' : 'none',
   plugins: [
+    new CopyWebpackPlugin(filesToCopy),
     new NunjucksWebpackPlugin({
       templates: [
         {
           from: 'src/templates/index.njk',
-          to: 'index.html'
+          to: 'index.html',
         },
-      ]
+      ],
     }),
     new OptimizeCssAssetsPlugin({
-      cssProcessor: require('cssnano'),
+      cssProcessor: cssnano,
       cssProcessorPluginOptions: {
         preset: ['default', { discardComments: { removeAll: true } }],
       },
-      canPrint: true
-    })
+      canPrint: true,
+    }),
   ],
 };
 
-function getBabelConfig({ isModern = false }){
-  const browsers = isModern ? [
-    'last 2 Chrome versions',
-    'last 2 Safari versions',
-    'last 2 iOS versions',
-    'last 2 Edge versions',
-    'Firefox ESR',
-  ] : [
-    'IE 11',
-  ];
+function getBabelConfig({ isModern = false }) {
+  const browsers = isModern
+    ? [
+        'last 2 Chrome versions',
+        'last 2 Safari versions',
+        'last 2 iOS versions',
+        'last 2 Edge versions',
+        'Firefox ESR',
+      ]
+    : ['IE 11'];
 
   return {
-    "presets": [
+    presets: [
       [
-        "@babel/preset-env",
+        '@babel/preset-env',
         {
-          "targets": {
+          targets: {
             browsers,
           },
           useBuiltIns: 'entry',
           corejs: 3,
-        }
-      ]
+        },
+      ],
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
-      ['@babel/proposal-decorators', { decoratorsBeforeExport: true } ],
+      ['@babel/proposal-decorators', { decoratorsBeforeExport: true }],
     ],
-  }
+  };
 }
 
 const modernConfig = merge(sharedConfig, {
@@ -160,15 +163,15 @@ const modernConfig = merge(sharedConfig, {
   },
   module: {
     rules: [
-      { 
-        test: /\.js/, 
+      {
+        test: /\.js/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          options: getBabelConfig({ isModern: true })
-        }
+          options: getBabelConfig({ isModern: true }),
+        },
       },
-    ]
+    ],
   },
 });
 
@@ -179,19 +182,19 @@ const legacyConfig = merge(sharedConfig, {
   },
   module: {
     rules: [
-      { 
-        test: /\.js/, 
+      {
+        test: /\.js/,
         // exclude: /node_modules/,
-        use: { 
+        use: {
           loader: 'babel-loader',
-          options: getBabelConfig({ isModern: false })
-        }
+          options: getBabelConfig({ isModern: false }),
+        },
       },
-    ]
+    ],
   },
 });
 
-const configs = [ modernConfig ];
+const configs = [modernConfig];
 
 if (prod) {
   configs.push(legacyConfig);
