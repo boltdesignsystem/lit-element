@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import { LitElement } from 'lit-element';
-import { Slotify } from './slotify.js';
+import { Slotify } from './Slotify.js';
 import styleInjector from './style-injector.js';
 
 const useShadow =
