@@ -1,3 +1,5 @@
+// this is basically a slimmed down port of https://github.com/webpack-contrib/style-loader/blob/master/src/runtime/injectStylesIntoStyleTag.js with an added `getStyles` method to reuse the example same logic for web component inline styles vs <style> tag lazy-loaded styles
+
 /* eslint-disable no-plusplus,no-param-reassign */
 const stylesInDom = {};
 
@@ -29,23 +31,6 @@ const getTarget = (function getTarget() {
 
 function insertStyleElement() {
   const style = document.createElement('style');
-
-  // if (typeof options.attributes.nonce === 'undefined') {
-  //   const nonce =
-  //     typeof __webpack_nonce__ !== 'undefined' ? __webpack_nonce__ : null;
-
-  //   if (nonce) {
-  //     options.attributes.nonce = nonce;
-  //   }
-  // }
-
-  // Object.keys(options.attributes).forEach((key) => {
-  //   style.setAttribute(key, options.attributes[key]);
-  // });
-
-  // if (typeof options.insert === 'function') {
-  //   options.insert(style);
-  // } else {
   const target = getTarget('head');
 
   if (!target) {
@@ -55,7 +40,6 @@ function insertStyleElement() {
   }
 
   target.appendChild(style);
-  // }
 
   return style;
 }
@@ -98,21 +82,12 @@ function removeStyleElement(style) {
 }
 
 function addStyle(obj) {
-  // if (options.singleton) {
-  //   const styleIndex = singletonCounter++;
-
-  //   style = singleton || (singleton = insertStyleElement());
-
-  //   update = applyToSingletonTag.bind(null, style, styleIndex, false);
-  //   remove = applyToSingletonTag.bind(null, style, styleIndex, true);
-  // } else {
   const style = insertStyleElement();
 
   const update = applyToTag.bind(null, style);
   const remove = () => {
     removeStyleElement(style);
   };
-  // }
 
   update(obj);
 
@@ -134,23 +109,6 @@ function addStyle(obj) {
   };
 }
 
-// const isOldIE = (function isOldIE() {
-//   let memo;
-
-//   return function memorize() {
-//     if (typeof memo === 'undefined') {
-//       // Test for IE <= 9 as proposed by Browserhacks
-//       // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
-//       // Tests for existence of standard globals is to allow style-loader
-//       // to operate correctly into non-standard environments
-//       // @see https://github.com/webpack-contrib/style-loader/issues/177
-//       memo = Boolean(window && document && document.all && !window.atob);
-//     }
-
-//     return memo;
-//   };
-// })();
-
 function listToStyles(list) {
   const styles = [];
   const newStyles = {};
@@ -169,7 +127,6 @@ function listToStyles(list) {
       newStyles[id].parts.push(part);
     }
   }
-
   return styles;
 }
 
@@ -201,55 +158,7 @@ function addStylesToDom(styles) {
   }
 }
 
-/* istanbul ignore next  */
-// const replaceText = (function replaceText() {
-//   const textStore = [];
-
-//   return function replace(index, replacement) {
-//     textStore[index] = replacement;
-
-//     return textStore.filter(Boolean).join('\n');
-//   };
-// })();
-
-// function applyToSingletonTag(style, index, remove, obj) {
-//   const css = remove ? '' : obj.css;
-
-//   // For old IE
-//   /* istanbul ignore if  */
-//   if (style.styleSheet) {
-//     style.styleSheet.cssText = replaceText(index, css);
-//   } else {
-//     const cssNode = document.createTextNode(css);
-//     const childNodes = style.childNodes;
-
-//     if (childNodes[index]) {
-//       style.removeChild(childNodes[index]);
-//     }
-
-//     if (childNodes.length) {
-//       style.insertBefore(cssNode, childNodes[index]);
-//     } else {
-//       style.appendChild(cssNode);
-//     }
-//   }
-// }
-
-// let singleton = null;
-// let singletonCounter = 0;
-
 export default function(list) {
-  // options = options || {};
-
-  // options.attributes =
-  //   typeof options.attributes === 'object' ? options.attributes : {};
-
-  // Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-  // tags it will allow on a page
-  // if (!options.singleton && typeof options.singleton !== 'boolean') {
-  //   options.singleton = isOldIE();
-  // }
-
   return {
     styles: listToStyles(list),
     getStyles() {
@@ -264,8 +173,6 @@ export default function(list) {
       this.update(newList);
     },
     use() {
-      // this.styles = listToStyles(list);
-
       addStylesToDom(this.styles);
     },
     update(newList) {
@@ -300,8 +207,4 @@ export default function(list) {
       }
     },
   };
-
-  // return function update(newList) {
-
-  // };
 }
