@@ -65,12 +65,12 @@
   "prettier": "@open-wc/prettier-config",
   "husky": {
     "hooks": {
-      "_pre-commit": "lint-staged"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
     "*.js": [
-      "eslint --fix",
+      "eslint --ignore-path .eslintignore --fix",
       "prettier --write",
       "git add"
     ]
