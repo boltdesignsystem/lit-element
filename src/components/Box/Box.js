@@ -7,6 +7,8 @@ class MyBox extends BoltElement {
   @property()
   size = '';
 
+  static lazyStyles = [styles];
+
   static get styles() {
     return [unsafeCSS(styles)];
   }
