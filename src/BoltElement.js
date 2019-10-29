@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-expressions */
 import { LitElement } from 'lit-element';
-
 import { Slotify } from './slotify.js';
 import styleInjector from './style-injector.js';
 
