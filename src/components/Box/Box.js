@@ -1,16 +1,18 @@
 import { customElement, html, unsafeCSS, property } from 'lit-element';
 import { BoltElement } from '../../BoltElement.js';
-import styles from './Box.scss';
+import boxStyles from './Box.scss';
 
 @customElement('my-box')
 class MyBox extends BoltElement {
+  // static noShadow = true;
+
   @property()
   size = '';
 
-  static lazyStyles = [styles];
+  static lazyStyles = [boxStyles];
 
   static get styles() {
-    return [unsafeCSS(styles)];
+    return [unsafeCSS(boxStyles)];
   }
 
   render() {
