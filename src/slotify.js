@@ -1,5 +1,5 @@
-// eslint-disable-next-line max-classes-per-file
-export class TemplateLike extends HTMLElement {};
+/* eslint-disable class-methods-use-this,max-classes-per-file */
+export class TemplateLike extends HTMLElement {}
 // export type Template = HTMLTemplateElement | TemplateLike;
 
 export const Slotify = Base =>
@@ -21,7 +21,7 @@ export const Slotify = Base =>
 
     // Save a reference to the pseudoSlot content before lit-element renders
     saveSlots() {
-      const childNodes = [];
+      // const childNodes = [];
       Array.from(this.childNodes).forEach(child => {
         const slot = this.assignSlotToContent(child);
 
@@ -33,7 +33,7 @@ export const Slotify = Base =>
 
         // console.log(child.getAttribute === true || !child.textContent || child.textContent.trim().length > 0);
 
-        if (!child.textContent || child.textContent.trim().length > 0){
+        if (!child.textContent || child.textContent.trim().length > 0) {
           // console.log(child);
           if (!this.templateMap.has(slot)) {
             this.templateMap.set(slot, [child]);
@@ -49,16 +49,16 @@ export const Slotify = Base =>
           } else {
             this.templateMap.set(slot, [...this.templateMap.get(slot), child]);
           }
-          
+
           // console.log(slot);
         }
       });
 
       // console.log(shouldSlotChildren);
 
-      const shouldSlotChildren =
-        childNodes.length > 0 ||
-        childNodes.some(child => !this.isEmptyTextNode(child));
+      // const shouldSlotChildren =
+      //   childNodes.length > 0 ||
+      //   childNodes.some(child => !this.isEmptyTextNode(child));
 
       // console.log(shouldSlotChildren);
 
@@ -106,14 +106,17 @@ export const Slotify = Base =>
 
       if (slotContent && slotContent.content) {
         return slotContent.content;
-      } if (slotContent && slotContent.childNodes) {
+      }
+      if (slotContent && slotContent.childNodes) {
         return Array.from(slotContent.childNodes);
-      } if (slotContent) {
+      }
+      if (slotContent) {
         return slotContent;
-      } if (defaultContent) {
+      }
+      if (defaultContent) {
         return defaultContent;
-      } 
-        
-      
+      }
+
+      return null;
     }
   };

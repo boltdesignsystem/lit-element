@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-expressions */
 import { LitElement } from 'lit-element';
 
-import { Slotify } from './slotify';
-import styleInjector from './style-injector';
+import { Slotify } from './slotify.js';
+import styleInjector from './style-injector.js';
 
 const useShadow =
   ('attachShadow' in Element.prototype && 'getRootNode' in Element.prototype) || window.ShadyDOM;
@@ -10,24 +10,27 @@ const useShadow =
 class BoltElement extends Slotify(LitElement) {
   createRenderRoot() {
     if (useShadow && !this.constructor.noShadow && this.attachShadow) {
-      // eslint-disable-next-line wc/attach-shadow-constructor
+      this.useShadow = true;
       return this.attachShadow({ mode: 'open' });
     }
+    this.useShadow = false;
     return this;
   }
 
-  connectedCallback(){
+  connectedCallback() {
     super.connectedCallback && super.connectedCallback();
-    if (this.constructor.lazyStyles && !this.shadowRoot){
-      styleInjector([].concat.apply([], this.constructor.lazyStyles)).add();
+    this.lazyStyles = this.constructor.lazyStyles;
+
+    if (this.lazyStyles && !this.useShadow) {
+      styleInjector(...this.lazyStyles).add();
     }
   }
 
-  disconnectedCallback(){
+  disconnectedCallback() {
     super.disconnectedCallback && super.disconnectedCallback();
-    
-    if (this.constructor.lazyStyles && !this.shadowRoot){
-      styleInjector([].concat.apply([], this.constructor.lazyStyles)).remove();
+
+    if (this.lazyStyles && !this.useShadow) {
+      styleInjector(...this.lazyStyles).remove();
     }
   }
 }

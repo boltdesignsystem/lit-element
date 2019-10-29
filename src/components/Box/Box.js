@@ -1,10 +1,9 @@
-import { customElement, html, LitElement, css, unsafeCSS, property } from "lit-element";
-import { BoltElement } from '../../BoltElement';
-import styles from "./Box.scss";
+import { customElement, html, unsafeCSS, property } from 'lit-element';
+import { BoltElement } from '../../BoltElement.js';
+import styles from './Box.scss';
 
-@customElement("my-box")
+@customElement('my-box')
 class MyBox extends BoltElement {
-
   @property()
   size = '';
 
@@ -14,18 +13,17 @@ class MyBox extends BoltElement {
 
   render() {
     return html`
-      <div class="test-component--${this.size ? this.size : "medium"}">
-        
-        ${this.slotify("default", "Default content")}
-        
-        ${this.slotify("red") && html`
-          <div style="background: red;">
-            ${this.slotify("red")}
-          </div>
-        `}
+      <div class="test-component--${this.size ? this.size : 'medium'}">
+        ${this.slotify('default', 'Default content')}
+        ${this.slotify('red') &&
+          html`
+            <div style="background: rgba(255, 0, 0, .4); padding: 1rem;">
+              ${this.slotify('red')}
+            </div>
+          `}
 
-        <div style="background: green;">
-          ${this.slotify("green", "default green content!!!")}
+        <div style="background: rgba(0, 128, 0, .4); padding: 1rem;">
+          ${this.slotify('green', 'Default slotted green content!')}
         </div>
       </div>
     `;

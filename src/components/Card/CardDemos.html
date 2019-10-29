@@ -1,32 +1,65 @@
+
+<h3>Simple card with slotted image + default text content.</h3>
 <my-card>
   <img src="https://placekitten.com/500/300" slot="image">
   Test Card #1
 </my-card>
 
+<h3>Simple card with slotted image + no default text content.</h3>
 <my-card>
   <img src="https://placekitten.com/500/300" slot="image">
 </my-card>
 
+<h3>Simple card default text content.</h3>
 <my-card>
   Test Card #3
 </my-card>
 
+<h3>Simple card default text content, broken out into multiple lines.</h3>
 <my-card>
   Test 
       Card 
       #4
 </my-card>
 
+<h3>Simple card with another card in the default slot</h3>
 <my-card>
   <my-card>
     <img src="https://placekitten.com/500/300" slot="image">
   </my-card>
 </my-card>
 
+<h3>Simple card with another card + a paragraph in the default slot + slotted image</h3>
 <my-card>
+  <img src="https://placekitten.com/500/300" slot="image">
+
   <p>Test Card #6</p>
 
   <my-card>
     <img src="https://placekitten.com/500/300" slot="image">
+
+    Nested Card
   </my-card>
+</my-card>
+
+<my-card>
+  <p>Default card content</p>
+  <my-box>
+    Nested box content
+
+    <div slot="red">
+      Custom Red slotted content
+    </div>
+  </my-box>
+</my-card>
+
+<my-card>
+  <p>Default card content</p>
+  <my-box>
+    Nested box content
+
+    <div slot="red">
+      Custom Red slotted content
+    </div>
+  </my-box>
 </my-card>

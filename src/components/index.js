@@ -1,2 +1,2 @@
-import './Card';
-import './Box';
+import './Card/Card.js';
+import './Box/Box.js';

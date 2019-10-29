@@ -32,6 +32,7 @@ my-card {
 .c-card__image > img {
   display: block;
   border: 0;
+  width: 100%;
 }
 
 .c-card__body:empty {

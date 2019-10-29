@@ -13,6 +13,15 @@
         font-family: sans-serif;
         background-color: #ededed;
       }
+
+      h3 {
+        margin-bottom: 1.5rem;
+        margin-top: 0;
+      }
+
+      * + h3 {
+        margin-top: 3rem;
+      }
     </style>
     <title>lit-element demo</title>
 
@@ -20,8 +29,13 @@
   </head>
   <body>
 
-    {% include "../components/Card/CardDemos.html" %}
-    {% include "../components/Box/BoxDemos.html" %}
+    <div style="padding: 1rem;">
+      {% include "../components/Card/CardDemos.html" %}
+    </div>
+
+    <div style="padding: 1rem;">
+      {% include "../components/Box/BoxDemos.html" %}
+    </div>
 
     {% include "./nomodule-shim.html" %}
     <script nomodule src="./main.legacy.js"></script>

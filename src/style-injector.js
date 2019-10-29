@@ -1,21 +1,5 @@
+/* eslint-disable no-plusplus,no-param-reassign */
 const stylesInDom = {};
-
-const isOldIE = (function isOldIE() {
-  let memo;
-
-  return function memorize() {
-    if (typeof memo === 'undefined') {
-      // Test for IE <= 9 as proposed by Browserhacks
-      // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
-      // Tests for existence of standard globals is to allow style-loader
-      // to operate correctly into non-standard environments
-      // @see https://github.com/webpack-contrib/style-loader/issues/177
-      memo = Boolean(window && document && document.all && !window.atob);
-    }
-
-    return memo;
-  };
-})();
 
 const getTarget = (function getTarget() {
   const memo = {};
@@ -42,6 +26,130 @@ const getTarget = (function getTarget() {
     return memo[target];
   };
 })();
+
+function insertStyleElement() {
+  const style = document.createElement('style');
+
+  // if (typeof options.attributes.nonce === 'undefined') {
+  //   const nonce =
+  //     typeof __webpack_nonce__ !== 'undefined' ? __webpack_nonce__ : null;
+
+  //   if (nonce) {
+  //     options.attributes.nonce = nonce;
+  //   }
+  // }
+
+  // Object.keys(options.attributes).forEach((key) => {
+  //   style.setAttribute(key, options.attributes[key]);
+  // });
+
+  // if (typeof options.insert === 'function') {
+  //   options.insert(style);
+  // } else {
+  const target = getTarget('head');
+
+  if (!target) {
+    throw new Error(
+      "Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.",
+    );
+  }
+
+  target.appendChild(style);
+  // }
+
+  return style;
+}
+
+function applyToTag(style, obj) {
+  let { css } = obj;
+  const { media } = obj;
+  const { sourceMap } = obj;
+
+  if (media) {
+    style.setAttribute('media', media);
+  }
+
+  if (sourceMap && btoa) {
+    css += `\n/*# sourceMappingURL=data:application/json;base64,${btoa(
+      unescape(encodeURIComponent(JSON.stringify(sourceMap))),
+    )} */`;
+  }
+
+  // For old IE
+  /* istanbul ignore if  */
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    while (style.firstChild) {
+      style.removeChild(style.firstChild);
+    }
+
+    style.appendChild(document.createTextNode(css));
+  }
+}
+
+function removeStyleElement(style) {
+  // istanbul ignore if
+  if (style.parentNode === null) {
+    return false;
+  }
+
+  return style.parentNode.removeChild(style);
+}
+
+function addStyle(obj) {
+  // if (options.singleton) {
+  //   const styleIndex = singletonCounter++;
+
+  //   style = singleton || (singleton = insertStyleElement());
+
+  //   update = applyToSingletonTag.bind(null, style, styleIndex, false);
+  //   remove = applyToSingletonTag.bind(null, style, styleIndex, true);
+  // } else {
+  const style = insertStyleElement();
+
+  const update = applyToTag.bind(null, style);
+  const remove = () => {
+    removeStyleElement(style);
+  };
+  // }
+
+  update(obj);
+
+  return function updateStyle(newObj) {
+    if (newObj) {
+      if (
+        newObj.css === obj.css &&
+        newObj.media === obj.media &&
+        newObj.sourceMap === obj.sourceMap
+      ) {
+        return;
+      }
+
+      // eslint-disable-next-line no-param-reassign
+      update((obj = newObj));
+    } else {
+      remove();
+    }
+  };
+}
+
+// const isOldIE = (function isOldIE() {
+//   let memo;
+
+//   return function memorize() {
+//     if (typeof memo === 'undefined') {
+//       // Test for IE <= 9 as proposed by Browserhacks
+//       // @see http://browserhacks.com/#hack-e71d8692f65334173fee715c222cb805
+//       // Tests for existence of standard globals is to allow style-loader
+//       // to operate correctly into non-standard environments
+//       // @see https://github.com/webpack-contrib/style-loader/issues/177
+//       memo = Boolean(window && document && document.all && !window.atob);
+//     }
+
+//     return memo;
+//   };
+// })();
 
 function listToStyles(list) {
   const styles = [];
@@ -93,58 +201,16 @@ function addStylesToDom(styles) {
   }
 }
 
-function insertStyleElement() {
-  const style = document.createElement('style');
-
-  // if (typeof options.attributes.nonce === 'undefined') {
-  //   const nonce =
-  //     typeof __webpack_nonce__ !== 'undefined' ? __webpack_nonce__ : null;
-
-  //   if (nonce) {
-  //     options.attributes.nonce = nonce;
-  //   }
-  // }
-
-  // Object.keys(options.attributes).forEach((key) => {
-  //   style.setAttribute(key, options.attributes[key]);
-  // });
-
-  // if (typeof options.insert === 'function') {
-  //   options.insert(style);
-  // } else {
-  const target = getTarget('head');
-
-  if (!target) {
-    throw new Error(
-      "Couldn't find a style target. This probably means that the value for the 'insert' parameter is invalid.",
-    );
-  }
-
-  target.appendChild(style);
-  // }
-
-  return style;
-}
-
-function removeStyleElement(style) {
-  // istanbul ignore if
-  if (style.parentNode === null) {
-    return false;
-  }
-
-  style.parentNode.removeChild(style);
-}
-
 /* istanbul ignore next  */
-const replaceText = (function replaceText() {
-  const textStore = [];
+// const replaceText = (function replaceText() {
+//   const textStore = [];
 
-  return function replace(index, replacement) {
-    textStore[index] = replacement;
+//   return function replace(index, replacement) {
+//     textStore[index] = replacement;
 
-    return textStore.filter(Boolean).join('\n');
-  };
-})();
+//     return textStore.filter(Boolean).join('\n');
+//   };
+// })();
 
 // function applyToSingletonTag(style, index, remove, obj) {
 //   const css = remove ? '' : obj.css;
@@ -169,74 +235,10 @@ const replaceText = (function replaceText() {
 //   }
 // }
 
-function applyToTag(style, obj) {
-  let {css} = obj;
-  const {media} = obj;
-  const {sourceMap} = obj;
-
-  if (media) {
-    style.setAttribute('media', media);
-  }
-
-  if (sourceMap && btoa) {
-    css += `\n/*# sourceMappingURL=data:application/json;base64,${btoa(
-      unescape(encodeURIComponent(JSON.stringify(sourceMap))),
-    )} */`;
-  }
-
-  // For old IE
-  /* istanbul ignore if  */
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    while (style.firstChild) {
-      style.removeChild(style.firstChild);
-    }
-
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
 // let singleton = null;
 // let singletonCounter = 0;
 
-function addStyle(obj) {
-  // if (options.singleton) {
-  //   const styleIndex = singletonCounter++;
-
-  //   style = singleton || (singleton = insertStyleElement());
-
-  //   update = applyToSingletonTag.bind(null, style, styleIndex, false);
-  //   remove = applyToSingletonTag.bind(null, style, styleIndex, true);
-  // } else {
-  const style = insertStyleElement();
-
-  const update = applyToTag.bind(null, style);
-  const remove = () => {
-    removeStyleElement(style);
-  };
-  // }
-
-  update(obj);
-
-  return function updateStyle(newObj) {
-    if (newObj) {
-      if (
-        newObj.css === obj.css &&
-        newObj.media === obj.media &&
-        newObj.sourceMap === obj.sourceMap
-      ) {
-        return;
-      }
-
-      update((obj = newObj));
-    } else {
-      remove();
-    }
-  };
-}
-
-export default function(list){
+export default function(list) {
   // options = options || {};
 
   // options.attributes =
@@ -250,15 +252,15 @@ export default function(list){
 
   return {
     styles: listToStyles(list),
-    getStyles(){
+    getStyles() {
       return this.styles.map(style => style.parts[0].css);
     },
 
     // aliases to the existing use + update methods
-    add(){
+    add() {
       this.use();
     },
-    remove(newList){
+    remove(newList) {
       this.update(newList);
     },
     use() {
@@ -302,4 +304,4 @@ export default function(list){
   // return function update(newList) {
 
   // };
-};
+}
