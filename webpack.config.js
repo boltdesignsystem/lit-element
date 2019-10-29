@@ -19,6 +19,11 @@ const filesToCopy = [
     to: '.',
     flatten: true,
   },
+  {
+    from: join(process.cwd(), 'src/favicon.ico'),
+    to: '.',
+    flatten: true,
+  },
 ];
 
 const scssLoaders = [

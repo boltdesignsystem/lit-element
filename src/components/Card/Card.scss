@@ -18,6 +18,7 @@ my-card {
 ::slotted(img){
   display: block;
   width: 100%;
+  height: auto;
 }
 
 ::slotted(my-card){
@@ -33,6 +34,7 @@ my-card {
   display: block;
   border: 0;
   width: 100%;
+  height: auto;
 }
 
 .c-card__body:empty {
